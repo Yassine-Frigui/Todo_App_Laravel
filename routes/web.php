@@ -1,8 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
-// Redirige / vers la liste des tâches
-Route::get('/', fn() => redirect()->route('tasks.index'));
-// Génère automatiquement les 7 routes CRUD
-Route::resource('tasks', TaskController::class);
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', fn () => redirect()->route('tasks.index'));
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('tasks', TaskController::class);
+});
+
+require __DIR__.'/auth.php';
