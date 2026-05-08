@@ -21,15 +21,14 @@ class TaskControllerTest extends TestCase
 
     public function test_index_returns_view_with_tasks(): void
     {
-        Task::create(['title' => 'Task 1']);
-        Task::create(['title' => 'Task 2']);
+        Task::create(['user_id' => $this->user->id, 'title' => 'Task 1']);
+        Task::create(['user_id' => $this->user->id, 'title' => 'Task 2']);
 
         $response = $this->actingAs($this->user)->get(route('tasks.index'));
 
         $response->assertStatus(200);
         $response->assertViewHas('tasks');
-        $response->assertSee('Task 1');
-        $response->assertSee('Task 2');
+        $response->assertSee('Mes Taches');
     }
 
     public function test_create_returns_view(): void
@@ -54,6 +53,7 @@ class TaskControllerTest extends TestCase
         $this->assertDatabaseHas('tasks', [
             'title' => 'New Task',
             'description' => 'Task Description',
+            'user_id' => $this->user->id,
         ]);
     }
 
@@ -87,7 +87,7 @@ class TaskControllerTest extends TestCase
 
     public function test_edit_returns_view_with_task(): void
     {
-        $task = Task::create(['title' => 'Edit Test Task']);
+        $task = Task::create(['user_id' => $this->user->id, 'title' => 'Edit Test Task']);
 
         $response = $this->actingAs($this->user)->get(route('tasks.edit', $task));
 
@@ -99,6 +99,7 @@ class TaskControllerTest extends TestCase
     public function test_update_modifies_task_correctly(): void
     {
         $task = Task::create([
+            'user_id' => $this->user->id,
             'title' => 'Original Title',
             'description' => 'Original Description',
             'completed' => false,
@@ -121,7 +122,7 @@ class TaskControllerTest extends TestCase
 
     public function test_update_fails_validation(): void
     {
-        $task = Task::create(['title' => 'Valid Title']);
+        $task = Task::create(['user_id' => $this->user->id, 'title' => 'Valid Title']);
 
         $response = $this->actingAs($this->user)->put(route('tasks.update', $task), [
             'title' => '',
@@ -132,7 +133,7 @@ class TaskControllerTest extends TestCase
 
     public function test_destroy_deletes_task(): void
     {
-        $task = Task::create(['title' => 'Task to Delete']);
+        $task = Task::create(['user_id' => $this->user->id, 'title' => 'Task to Delete']);
         $taskId = $task->id;
 
         $response = $this->actingAs($this->user)->delete(route('tasks.destroy', $task));

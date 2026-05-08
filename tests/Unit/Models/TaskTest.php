@@ -3,6 +3,7 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -10,9 +11,18 @@ class TaskTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected User $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+    }
+
     public function test_task_can_be_created_with_mass_assignment(): void
     {
         $task = Task::create([
+            'user_id' => $this->user->id,
             'title' => 'Test Task',
             'description' => 'Test Description',
             'completed' => false,
@@ -28,6 +38,7 @@ class TaskTest extends TestCase
     public function test_task_can_be_updated(): void
     {
         $task = Task::create([
+            'user_id' => $this->user->id,
             'title' => 'Original Title',
             'description' => 'Original Description',
             'completed' => false,
@@ -45,6 +56,7 @@ class TaskTest extends TestCase
     public function test_task_can_be_deleted(): void
     {
         $task = Task::create([
+            'user_id' => $this->user->id,
             'title' => 'Task to Delete',
             'description' => 'Will be deleted',
         ]);
@@ -68,6 +80,7 @@ class TaskTest extends TestCase
     public function test_task_has_timestamps(): void
     {
         $task = Task::create([
+            'user_id' => $this->user->id,
             'title' => 'Timestamp Test',
             'description' => 'Testing timestamps',
         ]);
@@ -79,6 +92,7 @@ class TaskTest extends TestCase
     public function test_task_default_completed_is_false(): void
     {
         $task = Task::create([
+            'user_id' => $this->user->id,
             'title' => 'Default Completed Test',
             'completed' => false,
         ]);
